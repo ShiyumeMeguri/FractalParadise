@@ -1,7 +1,6 @@
 #ifndef FRACTAL_FUNCTION_INCLUDED
 #define FRACTAL_FUNCTION_INCLUDED
 
-// --- 新增代码开始 ---
 // 计算复数 z 的 p 次幂 (z^p)
 float2 cx_pow(float2 z, float2 p)
 {
@@ -25,10 +24,8 @@ float2 cx_pow(float2 z, float2 p)
     float r = exp(real_part);
     return float2(r * cos(imag_part), r * sin(imag_part));
 }
-// --- 新增代码结束 ---
 
-
-// (1) 定义基于原 A 中的复数运算工具函数
+// (1) 定义复数运算工具函数
 float2 cx_mul(float2 a, float2 b)
 {
     return float2(
@@ -50,7 +47,6 @@ float2 cx_cube(float2 a)
     float x2 = a.x*a.x;
     float y2 = a.y*a.y;
     float d  = x2 - y2;
-    // 按照 A 中 feather 分形的实现方式
     return float2(
         a.x*(d - y2 - y2),
         a.y*(x2 + x2 + d)
@@ -67,43 +63,12 @@ float2 cx_div(float2 a, float2 b)
     return numerator * denom;
 }
 
-float2 cx_sin(float2 a)
-{
-    // A 中同名函数
-    return float2(
-        sin(a.x)*cosh(a.y),
-        cos(a.x)*sinh(a.y)
-    );
-}
-
-float2 cx_cos(float2 a)
-{
-    // A 中同名函数
-    return float2(
-        cos(a.x)*cosh(a.y),
-        -sin(a.x)*sinh(a.y)
-    );
-}
-
-float2 cx_exp(float2 a)
-{
-    // A 中同名函数
-    float r = exp(a.x);
-    return float2(
-        r*cos(a.y),
-        r*sin(a.y)
-    );
-}
-
-
-// (2) 定义所有分形函数 (与 A 中同名、同逻辑)
+// (2) 定义所有分形函数
 float2 mandelbrot(float2 z, float2 c)
 {
-    // --- 修改代码开始 ---
-    // 从 shader uniform 变量中获取次幂
     float2 p = float2(_PowerReal, _PowerImag);
 
-    // 当次幂为 (2, 0) 时，使用效率更高的平方函数，这是默认情况
+    // 当次幂为 (2, 0) 时，使用效率更高的平方函数
     if (p.x == 2.0 && p.y == 0.0)
     {
         return cx_sqr(z) + c;
@@ -111,28 +76,50 @@ float2 mandelbrot(float2 z, float2 c)
     
     // 其他情况下，使用通用的复数次幂函数
     return cx_pow(z, p) + c;
-    // --- 修改代码结束 ---
 }
 
+// --- 代码修正 ---
 float2 burning_ship(float2 z, float2 c)
 {
-    float x = z.x;
-    float y = z.y;
-    return float2(x*x - y*y, 2.0*abs(x*y)) + c;
+    // Burning Ship 的核心在于对 z 的分量取绝对值
+    z = abs(z);
+    
+    float2 p = float2(_PowerReal, _PowerImag);
+
+    // 当次幂为 (2, 0) 时，为原版 Burning Ship
+    if (p.x == 2.0 && p.y == 0.0)
+    {
+        return cx_sqr(z) + c;
+    }
+    
+    // 其他情况下，对取绝对值后的 z 进行复数次幂计算
+    return cx_pow(z, p) + c;
 }
 
+// --- 代码修正 ---
 float2 feather(float2 z, float2 c)
 {
-    // z -> (z^3 / (1 + z*z)) + c
+    // 原公式: z -> (z^3 / (1 + z*z)) + c
+    // 将其推广为 z -> (z^p / (1 + z*z)) + c
+    // 保留分母中的 z*z 以维持其基本形态
     float2 one = float2(1.0, 0.0);
     float2 zSquared = z * z;
-    return cx_div(cx_cube(z), (one + zSquared)) + c;
+    float2 p = float2(_PowerReal, _PowerImag);
+
+    // 当次幂为 (3, 0) 时，使用效率更高的立方函数
+    if (p.x == 3.0 && p.y == 0.0)
+    {
+         return cx_div(cx_cube(z), (one + zSquared)) + c;
+    }
+
+    return cx_div(cx_pow(z, p), (one + zSquared)) + c;
 }
 
+// --- 未修改 ---
+// Sfx, Henon, Duffing, Ikeda, Chirikov 具有不同的数学结构，
+// 它们不是 z -> z^p + c 的直接变体，因此不应用复数次幂替换。
 float2 sfx(float2 z, float2 c)
 {
-    // z -> z*|z|^2 - (z*(c^2))
-    // 实际为: z * dot(z,z) - cx_mul(z, c*c)
     float d = dot(z,z);
     float2 cc2 = float2(c.x*c.x - c.y*c.y, 2*c.x*c.y);
     return z*d - cx_mul(z, cc2);
@@ -140,7 +127,6 @@ float2 sfx(float2 z, float2 c)
 
 float2 henon(float2 z, float2 c)
 {
-    // z -> (1 - c.x*z.x^2 + z.y, c.y*z.x)
     return float2(
         1.0 - c.x*z.x*z.x + z.y,
         c.y * z.x
@@ -149,7 +135,6 @@ float2 henon(float2 z, float2 c)
 
 float2 duffing(float2 z, float2 c)
 {
-    // z -> (z.y, -c.y*z.x + c.x*z.y - z.y^3)
     return float2(
         z.y,
         -c.y*z.x + c.x*z.y - z.y*z.y*z.y
@@ -158,8 +143,6 @@ float2 duffing(float2 z, float2 c)
 
 float2 ikeda(float2 z, float2 c)
 {
-    // z -> (1 + c.x*(z.x*cos(t) - z.y*sin(t)), c.y*(z.x*sin(t) + z.y*cos(t)))
-    // 其中 t = 0.4 - 6/(1 + |z|^2)
     float t = 0.4 - 6.0 / (1.0 + dot(z,z));
     float st = sin(t);
     float ct = cos(t);
@@ -171,20 +154,12 @@ float2 ikeda(float2 z, float2 c)
 
 float2 chirikov(float2 z, float2 c)
 {
-    // z -> (x + c.x*y, y + c.y*sin(x + c.x*y))
-    // 但原 A 中写法：
-    // z.y += c.y * sin(z.x);
-    // z.x += c.x * z.y;
-    // return z;
-    //
-    // 这里直接照搬 A 中逻辑:
     z.y += c.y * sin(z.x);
     z.x += c.x * z.y;
     return z;
 }
 
-
-// (3) 给出一个统一接口：根据 fractalType 选择不同分形
+// (3) 统一接口
 float2 applySelectedFractal(int fractalType, float2 z, float2 c)
 {
     switch (fractalType)
