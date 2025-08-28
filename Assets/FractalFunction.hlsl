@@ -1,6 +1,33 @@
 #ifndef FRACTAL_FUNCTION_INCLUDED
 #define FRACTAL_FUNCTION_INCLUDED
 
+// --- 新增代码开始 ---
+// 计算复数 z 的 p 次幂 (z^p)
+float2 cx_pow(float2 z, float2 p)
+{
+    // 处理 z = 0 的情况, 避免 log(0) 导致结果为 NaN
+    if (z.x == 0.0 && z.y == 0.0) return float2(0, 0);
+
+    // 公式: z^p = exp(p * log(z))
+    // 其中 log(z) = log(|z|) + i*arg(z)
+    // log(|z|) = 0.5 * log(z.x*z.x + z.y*z.y)
+    // arg(z) = atan2(z.y, z.x)
+    float log_r = 0.5 * log(dot(z, z));
+    float theta = atan2(z.y, z.x);
+
+    // 计算 p * log(z)
+    // (p.x + i*p.y) * (log_r + i*theta) = (p.x*log_r - p.y*theta) + i*(p.x*theta + p.y*log_r)
+    float real_part = p.x * log_r - p.y * theta;
+    float imag_part = p.x * theta + p.y * log_r;
+
+    // 计算 exp(real_part + i*imag_part)
+    // exp(x + iy) = exp(x) * (cos(y) + i*sin(y))
+    float r = exp(real_part);
+    return float2(r * cos(imag_part), r * sin(imag_part));
+}
+// --- 新增代码结束 ---
+
+
 // (1) 定义基于原 A 中的复数运算工具函数
 float2 cx_mul(float2 a, float2 b)
 {
@@ -72,7 +99,19 @@ float2 cx_exp(float2 a)
 // (2) 定义所有分形函数 (与 A 中同名、同逻辑)
 float2 mandelbrot(float2 z, float2 c)
 {
-    return cx_sqr(z) + c;
+    // --- 修改代码开始 ---
+    // 从 shader uniform 变量中获取次幂
+    float2 p = float2(_PowerReal, _PowerImag);
+
+    // 当次幂为 (2, 0) 时，使用效率更高的平方函数，这是默认情况
+    if (p.x == 2.0 && p.y == 0.0)
+    {
+        return cx_sqr(z) + c;
+    }
+    
+    // 其他情况下，使用通用的复数次幂函数
+    return cx_pow(z, p) + c;
+    // --- 修改代码结束 ---
 }
 
 float2 burning_ship(float2 z, float2 c)

@@ -2,20 +2,25 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Fractal
   m_Shader: {fileID: 4800000, guid: 5791cec9e31b1b34fa68bbd7e787535e, type: 3}
-  m_ShaderKeywords: _REVERSE_ON _TOGGLEFEATURE_ON _USEJULIA_ON
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords:
+  - _TOGGLEFEATURE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -23,20 +28,22 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _A: 0.5
-    - _CX: 858.4
-    - _CY: -75113.95
-    - _CenterX: 0
+    - _CX: 857.64
+    - _CY: -77781
+    - _CenterX: -1.4
     - _CenterY: 0
     - _FlowLight: -1.38
     - _FractalType: 0
     - _Iterations: 500
     - _Leaf: 0.1
-    - _Reverse: 1
-    - _Scale: 200000000
+    - _Reverse: 0
+    - _Scale: 10000
     - _ToggleFeature: 1
-    - _UseJulia: 1
+    - _UseJulia: 0
     - leafOrbitOffset: 3
     m_Colors:
     - _Color: {r: 10, g: 2.5, b: 0.75, a: 1}
+  m_BuildTextureStacks: []

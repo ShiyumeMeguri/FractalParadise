@@ -4,6 +4,10 @@ Shader "Custom/ModularFractalShader_BStyle"
     {
         _MainTex ("Texture", 2D) = "white" {}
         [Enum(FractalType)] _FractalType ("Fractal Type", Float) = 0
+        // --- 新增代码开始 ---
+        _PowerReal ("Power (Real)", Float) = 2.0
+        _PowerImag ("Power (Imaginary)", Float) = 0.0
+        // --- 新增代码结束 ---
         _CenterX ("Center X", Float) = 10000
         _CenterY ("Center Y", Float) = 10000
         _Scale   ("Scale", Float) = 1
@@ -33,6 +37,15 @@ Shader "Custom/ModularFractalShader_BStyle"
             #pragma target 4.0
 
             #include "UnityCG.cginc"
+            
+            float _PowerReal, _PowerImag;
+            sampler2D _MainTex;
+            float4 _MainTex_ST;
+            float4 _Color;
+            float _CenterX, _CenterY, _Scale;
+            float leafOrbitOffset, _CX, _CY, _Reverse, _Iterations, _UseJulia;
+            int _FractalType;
+
             #include "FractalFunction.hlsl"
 
             float2 complexMultiply(float2 c1, float2 c2)
@@ -61,13 +74,6 @@ Shader "Custom/ModularFractalShader_BStyle"
                 return pow((0.5 - 0.5 * cos(phase)).xxx, exponents);
             }
 
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
-            float4 _Color;
-            float _CenterX, _CenterY, _Scale;
-            float leafOrbitOffset, _CX, _CY, _Reverse, _Iterations, _UseJulia;
-            int _FractalType;
-
             float3 calculateFractalColorBStyle(float2 c, float maxIters)
             {
                 if (_Reverse > 0.5)
@@ -93,7 +99,8 @@ Shader "Custom/ModularFractalShader_BStyle"
                 float iTime = _Time.y;
                 if (iters == maxIters)
                 {
-                    float t = 300.0 * innerDist - 0.075 * iTime + 0.45;
+                    float smoothIters = iters - (log2(log2(dot(z, z))) + smoothOff);
+                    float t = -0.25 * outerDist + 0.9 * log2(smoothIters) + 0.5;
                     return colorBand(t, _Color.rgb);
                 }
                 else
