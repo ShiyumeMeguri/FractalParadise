@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Fractal
+  m_Name: "\u51DD\u89C6"
   m_Shader: {fileID: 4800000, guid: 5791cec9e31b1b34fa68bbd7e787535e, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -33,7 +33,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _A: 0.5
-    - _CX: 17000
+    - _CX: 30000
     - _CY: 0
     - _CenterX: 0
     - _CenterY: 0
@@ -42,7 +42,7 @@ Material:
     - _Iterations: 500
     - _Leaf: 0.1
     - _PowerImag: 0
-    - _PowerReal: 1.3
+    - _PowerReal: 2
     - _Reverse: 1
     - _Scale: 1000000
     - _ToggleFeature: 1

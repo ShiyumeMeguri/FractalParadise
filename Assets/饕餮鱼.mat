@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Fractal
+  m_Name: "\u9955\u992E\u9C7C"
   m_Shader: {fileID: 4800000, guid: 5791cec9e31b1b34fa68bbd7e787535e, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -15,7 +15,6 @@ Material:
   m_InvalidKeywords:
   - _REVERSE_ON
   - _TOGGLEFEATURE_ON
-  - _USEJULIA_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -33,7 +32,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _A: 0.5
-    - _CX: 17000
+    - _CX: 30000
     - _CY: 0
     - _CenterX: 0
     - _CenterY: 0
@@ -41,13 +40,13 @@ Material:
     - _FractalType: 0
     - _Iterations: 500
     - _Leaf: 0.1
-    - _PowerImag: 0
-    - _PowerReal: 1.3
+    - _PowerImag: -0.67
+    - _PowerReal: 2
     - _Reverse: 1
     - _Scale: 1000000
     - _ToggleFeature: 1
-    - _UseJulia: 1
+    - _UseJulia: 0
     - leafOrbitOffset: 0.59
     m_Colors:
-    - _Color: {r: 10, g: 2.5, b: 0.75, a: 1}
+    - _Color: {r: 0.78533995, g: 8.218051, b: 9.999999, a: 1}
   m_BuildTextureStacks: []

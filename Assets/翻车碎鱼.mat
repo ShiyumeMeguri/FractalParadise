@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Fractal
+  m_Name: "\u7FFB\u8F66\u788E\u9C7C"
   m_Shader: {fileID: 4800000, guid: 5791cec9e31b1b34fa68bbd7e787535e, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
